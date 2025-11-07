@@ -1,0 +1,159 @@
+# --------------------------------------------------------------
+# Predictive Modeling for Click-Through Rate Optimization
+# at ConnectSphere Digital
+# --------------------------------------------------------------
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import (
+    accuracy_score, precision_score, recall_score, f1_score,
+    roc_curve, auc, confusion_matrix, classification_report
+)
+import pickle
+
+# --------------------------------------------------------------
+# 1. Load Dataset
+# --------------------------------------------------------------
+path = "/content/advertising.csv"  # Update this path if needed
+df = pd.read_csv(path)
+
+print("Dataset Loaded Successfully!")
+print("Shape:", df.shape)
+print("\nColumns:", df.columns.tolist())
+print("\nMissing Values:\n", df.isnull().sum())
+print("\nTarget Value Counts:\n", df['Clicked on Ad'].value_counts())
+
+# --------------------------------------------------------------
+# 2. Select Features for Modeling
+# --------------------------------------------------------------
+features = ['Age', 'Area Income', 'Daily Time Spent on Site',
+            'Daily Internet Usage', 'Male']
+target = 'Clicked on Ad'
+
+# Ensure features exist
+features = [f for f in features if f in df.columns]
+
+print("\nUsing features:", features)
+
+# --------------------------------------------------------------
+# 3. Exploratory Data Analysis (Optional - Visualization)
+# --------------------------------------------------------------
+for col in features:
+    plt.figure(figsize=(5, 3))
+    plt.hist(df[col], bins=30, color='skyblue', edgecolor='black')
+    plt.title(f"Distribution of {col}")
+    plt.xlabel(col)
+    plt.ylabel("Count")
+    plt.tight_layout()
+    plt.show()
+
+# --------------------------------------------------------------
+# 4. Data Preparation
+# --------------------------------------------------------------
+# Handle gender if categorical
+if 'Male' in df.columns and df['Male'].dtype == object:
+    df['Male'] = df['Male'].map({'Male': 1, 'Female': 0}).fillna(0).astype(int)
+
+# Select X and y
+X = df[features]
+y = df[target]
+
+# Split train/test
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42, stratify=y
+)
+
+# Scale features
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+
+# --------------------------------------------------------------
+# 5. Train Logistic Regression Model
+# --------------------------------------------------------------
+model = LogisticRegression(max_iter=1000)
+model.fit(X_train_scaled, y_train)
+print("\n Model Training Complete!")
+
+# --------------------------------------------------------------
+# 6. Model Evaluation
+# --------------------------------------------------------------
+y_pred = model.predict(X_test_scaled)
+y_proba = model.predict_proba(X_test_scaled)[:, 1]
+
+acc = accuracy_score(y_test, y_pred)
+prec = precision_score(y_test, y_pred)
+rec = recall_score(y_test, y_pred)
+f1 = f1_score(y_test, y_pred)
+roc_auc = auc(*roc_curve(y_test, y_proba)[:2])
+
+print("\n--- Model Performance ---")
+print(f"Accuracy:  {acc:.4f}")
+print(f"Precision: {prec:.4f}")
+print(f"Recall:    {rec:.4f}")
+print(f"F1 Score:  {f1:.4f}")
+print(f"ROC AUC:   {roc_auc:.4f}")
+
+print("\nClassification Report:\n", classification_report(y_test, y_pred))
+
+# --------------------------------------------------------------
+# 7. Confusion Matrix and ROC Curve
+# --------------------------------------------------------------
+cm = confusion_matrix(y_test, y_pred)
+plt.figure(figsize=(5, 4))
+plt.imshow(cm, interpolation='nearest', cmap='Blues')
+plt.title("Confusion Matrix")
+plt.xlabel("Predicted Label")
+plt.ylabel("True Label")
+for i in range(cm.shape[0]):
+    for j in range(cm.shape[1]):
+        plt.text(j, i, str(cm[i, j]), ha='center', va='center', color='red')
+plt.colorbar()
+plt.tight_layout()
+plt.show()
+
+# ROC Curve
+fpr, tpr, _ = roc_curve(y_test, y_proba)
+plt.figure(figsize=(6, 4))
+plt.plot(fpr, tpr, label=f"ROC Curve (AUC = {roc_auc:.2f})")
+plt.plot([0, 1], [0, 1], linestyle="--", color='gray')
+plt.title("Receiver Operating Characteristic (ROC) Curve")
+plt.xlabel("False Positive Rate")
+plt.ylabel("True Positive Rate")
+plt.legend()
+plt.tight_layout()
+plt.show()
+
+# --------------------------------------------------------------
+# 8. Feature Importance
+# --------------------------------------------------------------
+coeff = pd.Series(model.coef_[0], index=features).sort_values(key=abs, ascending=False)
+print("\nFeature Importance (sorted by absolute value):\n")
+print(coeff)
+
+# --------------------------------------------------------------
+# 9. Save Model and Scaler
+# --------------------------------------------------------------
+with open("logistic_model.pkl", "wb") as f:
+    pickle.dump(model, f)
+with open("scaler.pkl", "wb") as f:
+    pickle.dump(scaler, f)
+
+print("\nModel and Scaler saved successfully!")
+print("Files generated:")
+print(" - logistic_model.pkl")
+print(" - scaler.pkl")
+
+# --------------------------------------------------------------
+# 10. Sample Predictions
+# --------------------------------------------------------------
+sample = X_test.copy()
+sample['Actual'] = y_test.values
+sample['Predicted'] = y_pred
+sample['Click_Probability'] = np.round(y_proba, 4)
+print("\nSample Predictions (first 10):")
+print(sample.head(10))
