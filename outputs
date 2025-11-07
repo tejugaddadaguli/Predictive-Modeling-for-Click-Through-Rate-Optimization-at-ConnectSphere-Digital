@@ -1,0 +1,86 @@
+ Dataset Loaded Successfully!
+Shape: (1000, 10)
+
+Columns: ['Daily Time Spent on Site', 'Age', 'Area Income', 'Daily Internet Usage', 'Ad Topic Line', 'City', 'Male', 'Country', 'Timestamp', 'Clicked on Ad']
+
+Missing Values:
+ Daily Time Spent on Site    0
+Age                         0
+Area Income                 0
+Daily Internet Usage        0
+Ad Topic Line               0
+City                        0
+Male                        0
+Country                     0
+Timestamp                   0
+Clicked on Ad               0
+dtype: int64
+
+Target Value Counts:
+ Clicked on Ad
+0    500
+1    500
+Name: count, dtype: int64
+
+
+Using features: ['Age', 'Area Income', 'Daily Time Spent on Site', 'Daily Internet Usage', 'Male']
+ 
+
+ Model Training Complete!
+
+--- Model Performance ---
+Accuracy:  0.9800
+Precision: 0.9898
+Recall:    0.9700
+F1 Score:  0.9798
+ROC AUC:   0.9902
+
+Classification Report:
+               precision    recall  f1-score   support
+
+           0       0.97      0.99      0.98       100
+           1       0.99      0.97      0.98       100
+
+    accuracy                           0.98       200
+   macro avg       0.98      0.98      0.98       200
+weighted avg       0.98      0.98      0.98       200
+
+
+Feature Importance (sorted by absolute value):
+
+Daily Time Spent on Site   -2.808263
+Daily Internet Usage       -2.305518
+Area Income                -1.522614
+Age                         1.248237
+Male                       -0.263863
+dtype: float64
+
+Model and Scaler saved successfully!
+Files generated:
+ - logistic_model.pkl
+ - scaler.pkl
+
+Sample Predictions (first 10):
+     Age  Area Income  Daily Time Spent on Site  Daily Internet Usage  Male  \
+832   42     52177.40                     41.46                128.98     1   
+571   33     66431.87                     72.76                240.63     1   
+430   32     43870.51                     88.72                211.87     1   
+109   32     72272.90                     74.02                210.54     0   
+219   38     20856.54                     43.60                170.49     0   
+971   48     34418.09                     45.17                132.07     1   
+377   42     26023.99                     69.20                123.80     0   
+809   43     23942.61                     67.51                127.20     0   
+177   22     60309.58                     72.04                199.43     0   
+40    29     57691.95                     84.98                202.61     0   
+
+     Actual  Predicted  Click_Probability  
+832       1          1             0.9999  
+571       0          0             0.0065  
+430       0          0             0.0192  
+109       0          0             0.0188  
+219       1          1             1.0000  
+971       1          1             1.0000  
+377       1          1             0.9997  
+809       1          1             0.9998  
+177       0          0             0.0435  
+40        0          0             0.0140  
