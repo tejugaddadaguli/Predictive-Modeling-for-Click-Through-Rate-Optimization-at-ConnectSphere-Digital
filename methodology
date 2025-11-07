@@ -1,0 +1,39 @@
+1. Data Collection
+
+The first step involves gathering historical user data from past ad campaigns. The dataset typically includes:
+Demographic features: Age, Gender, Area Income, City.
+Behavioral features: Daily Time Spent on Site, Daily Internet Usage, Ad Topic Interest.
+Target variable: Whether the user clicked on the ad (1) or not (0).
+
+2. Data Preprocessing
+
+Data cleaning and transformation are performed to prepare the dataset for modeling:
+Handling missing values and outliers.
+Converting categorical variables into numerical form using label encoding or one-hot encoding.
+Normalizing or standardizing numeric features like income and usage time to bring them to a uniform scale.
+Splitting the dataset into training and testing sets (commonly 70%-30% or 80%-20%).
+
+3. Exploratory Data Analysis (EDA)
+
+EDA helps in understanding relationships between variables and the target output:
+Visualizing correlations between user attributes and click behavior.
+Detecting patterns such as whether younger users or high internet usage users are more likely to click.
+Identifying which features most influence ad engagement.
+
+4. Model Building (Logistic Regression)
+
+A logistic regression model is trained using the processed data.
+It uses a sigmoid function to estimate the probability that a user will click on an ad.
+The model outputs values between 0 and 1, which are then classified as “likely to click” or “unlikely to click”.
+
+5. Model Evaluation
+
+Performance is assessed using key classification metrics:
+Accuracy: Overall correctness of predictions.
+Precision: How many predicted clicks were actual clicks.
+Recall: How many actual clicks were correctly identified.
+F1-Score: Harmonic mean of precision and recall.
+
+6. Business Implementation
+
+The trained model is integrated into ad targeting systems to identify high-probability users. This enables optimized ad spend, higher CTR, and better ROAS for clients.
